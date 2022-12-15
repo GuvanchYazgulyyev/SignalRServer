@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="signalr.min.js"></script>
+    <script src="jquery.min.js"></script>
+    <title>SignalR</title>
+
+<!--     Sunucu Yolunu Belirtiyoruz-->    
+<script>
+$(document).ready(()=>{
+    const connection=new signalR.HubConnectionBuilder()
+    .withUrl("https://localhost:5001/myhub").build();
+    // Baglantıyı Aç
+    connection.start();
+
+    // Backend Tarafından Yazılın Methodu çagır
+    $("#btnGonder").click(()=>{
+        let message=$("#txtMessage").val();
+        connection.invoke("SendMessageAsync",message)
+        .catch(error=>console.log( `Mesaj Gönderilirken Hata Oluştu !!! ${error}`));
+    });
+
+    // Hub (Method) den gelem Mesajları dinler
+    connection.on("receiverMessage", message=>{$("div").append(message + "<br>")})
+})
+    </script>
+</head>
+<body>
+    <input type="text" id="txtMessage">
+    <button id="btnGonder">Gönder</button>
+    <div></div>
+</body>
+</html>
