@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SignalRServer.Business;
 using SignalRServer.Hubs;
 using System;
 using System.Collections.Generic;
@@ -29,9 +30,11 @@ namespace SignalRServer
             .AllowAnyHeader()
             .AllowCredentials().SetIsOriginAllowed(origin => true)));
 
+            services.AddTransient<MyBusiness>();
 
             services.AddRazorPages();
             services.AddSignalR();
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +62,8 @@ namespace SignalRServer
             {
                 //https://localhost:5001
                 endpoints.MapHub<MyHub>("/myhub");
+                endpoints.MapHub<MessageHub>("/messagehub");
+                endpoints.MapControllers();
             });
         }
     }
